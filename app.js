@@ -30,7 +30,7 @@ form.addEventListener("submit", function(event){
 function add(todo){
  let todoText = input.value;
 if(todo){
-  todoText = todo;
+  todoText = todo.text; //今まではtodoが innerText、文字情報だけだったが、オブジェクトになったので、completedじゃなくて、textカラムだけを渡すよ、という状態にする
 }
 
  if(todoText){
@@ -38,6 +38,9 @@ if(todo){
    li.innerText = todoText;
    li.classList.add("list-group-item");
 
+   if(todo && todo.completed){   //論理演算子「&&」は両方がtrueだった時。&&がtrueの時にif文が回るようにする
+      li.classList.add("text-decoration-line-through");　//リロードした時にでも、todoのデータがあって、そのtodoがcompleted　完了状態（打ち消しせん状態）だった時に、その状態になるようにする 
+   }
   //右クリックをしたら削除されるイベント
     li.addEventListener("contextmenu", function(event){
       event.preventDefault();
@@ -49,6 +52,7 @@ if(todo){
   //クリックしたら打ち消し線を付ける
     li.addEventListener("click", function(){
       li.classList.toggle("text-decoration-line-through");　
+      saveDate();　//打ち消し線の状態を保存できるようにする
     });
   //
    ul.appendChild(li);
@@ -65,9 +69,10 @@ function saveDate(){
   lists.forEach(list => {
     let todo = {
       text: list.innerText,   //テキスト情報を保存
-      completed: //完了状態("text-deco・・・"というCSSを持っていたら true,持っていなかったら false)
+      completed: list.classList.contains
+      ("text-decoration-line-through")  //完了状態("text-deco・・・"というCSSを持っていたら true,持っていなかったら false).containsはクラスを持っているかを確かめる
     }
-     todos.push(list.innerText);
+     todos.push(todo); //今まではlist.innerTextだけを保存していたが、completedも保存するためにオブジェクト「todo」を保存する
   });
   localStorage.setItem("todos", JSON.stringify(todos));
 }
